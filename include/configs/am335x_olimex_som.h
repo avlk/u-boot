@@ -18,6 +18,9 @@
 
 #include <configs/ti_am335x_common.h>
 
+/* We don't want to load linux by default */
+#undef CONFIG_SPL_OS_BOOT
+
 #ifndef CONFIG_SPL_BUILD
 #ifndef CONFIG_FIT
 # define CONFIG_FIT
@@ -80,9 +83,6 @@
 	"setenv bootpart " #instance":1 ; "\
 	"run mmcboot\0"
 
-#define BOOTENV_DEV_NAME_LEGACY_MMC(devtypeu, devtypel, instance) \
-	#devtypel #instance " "
-
 #define BOOTENV_DEV_NAND(devtypeu, devtypel, instance) \
 	"bootcmd_" #devtypel "=" \
 	"run nandboot\0"
@@ -92,7 +92,6 @@
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0) \
-	func(LEGACY_MMC, legacy_mmc, 0) \
 	func(NAND, nand, 0) \
 	func(PXE, pxe, na) \
 	func(DHCP, dhcp, na)
