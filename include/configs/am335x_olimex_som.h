@@ -85,6 +85,10 @@
 	"setenv bootpart " #instance":1 ; "\
 	"run mmcboot\0"
 
+#define BOOTENV_DEV_NAME_LEGACY_MMC(devtypeu, devtypel, instance) \
+	#devtypel #instance " "
+
+#ifdef CONFIG_NAND
 #define BOOTENV_DEV_NAND(devtypeu, devtypel, instance) \
 	"bootcmd_" #devtypel "=" \
 	"run nandboot\0"
@@ -94,9 +98,24 @@
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0) \
+	func(LEGACY_MMC, legacy_mmc, 0) \
+	func(MMC, mmc, 1) \
+	func(LEGACY_MMC, legacy_mmc, 1) \
 	func(NAND, nand, 0) \
 	func(PXE, pxe, na) \
 	func(DHCP, dhcp, na)
+#else
+#define BOOTENV_DEV_NAND(devtypeu, devtypel, instance) " "
+#define BOOTENV_DEV_NAME_NAND(devtypeu, devtypel, instance) " "
+#define BOOT_TARGET_DEVICES(func) \
+	func(MMC, mmc, 0) \
+	func(LEGACY_MMC, legacy_mmc, 0) \
+	func(MMC, mmc, 1) \
+	func(LEGACY_MMC, legacy_mmc, 1) \
+	func(PXE, pxe, na) \
+	func(DHCP, dhcp, na)
+#endif
+
 
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt; " \
@@ -170,7 +189,7 @@
 	"ramboot=echo Booting from ramdisk ...; " \
 		"run ramargs; " \
 		"bootz ${loadaddr} ${rdaddr} ${fdtaddr}\0" \
-	"findfdt=setenv fdtfile am335x-olimex-som.dtb;\0" \
+	"findfdt=setenv fdtfile am335x-olimex-som.dtb\0" \
 	NANDARGS \
 	NETARGS \
 	DFUARGS \
