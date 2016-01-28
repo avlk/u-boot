@@ -136,5 +136,11 @@ void config_ddr(unsigned int pll, const struct ctrl_ioregs *ioregs,
 		config_sdram_emif4d5(regs, nr);
 	else
 		config_sdram(regs, nr);
+
+	/* Wait for MIN(tDLLK,tZQINIT) before using DRAM
+	   Typically this is 512 clocks for 4Gbit chip, 
+           which is 1280us@400MHz. 2000us is a safe choice. */
+	udelay(1000);
+	udelay(1000);
 }
 #endif

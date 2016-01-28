@@ -51,6 +51,8 @@
 #define FAT_ENV_DEVICE_AND_PART		"0:1"
 #define FAT_ENV_FILE			"uEnv.txt"
 #define CONFIG_FAT_WRITE
+/* To support FAT partitions with real files created by real computers */
+#define CONFIG_SUPPORT_VFAT 
 
 /* Enhance our eMMC support / experience. */
 #define CONFIG_CMD_GPT

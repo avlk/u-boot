@@ -20,6 +20,9 @@
 #include <linux/compiler.h>
 #include <linux/ctype.h>
 
+//#undef debug
+//#define debug printf
+
 #ifdef CONFIG_SUPPORT_VFAT
 static const int vfat_enabled = 1;
 #else
@@ -70,12 +73,14 @@ int fat_set_blk_dev(block_dev_desc_t *dev_desc, disk_partition_t *info)
 	/* Make sure it has a valid FAT header */
 	if (disk_read(0, 1, buffer) != 1) {
 		cur_dev = NULL;
+		debug("%s: disk_read error\n", __func__);
 		return -1;
 	}
 
 	/* Check if it's actually a DOS volume */
 	if (memcmp(buffer + DOS_BOOT_MAGIC_OFFSET, "\x55\xAA", 2)) {
 		cur_dev = NULL;
+		debug("%s: boot magic mismatch\n", __func__);
 		return -1;
 	}
 
@@ -84,6 +89,7 @@ int fat_set_blk_dev(block_dev_desc_t *dev_desc, disk_partition_t *info)
 		return 0;
 	if (!memcmp(buffer + DOS_FS32_TYPE_OFFSET, "FAT32", 5))
 		return 0;
+	debug("%s: filesystem is not FAT/FAT32\n", __func__);
 
 	cur_dev = NULL;
 	return -1;
@@ -113,6 +119,8 @@ int fat_register_device(block_dev_desc_t *dev_desc, int part_no)
 #ifdef CONFIG_PARTITION_UUIDS
 		info.uuid[0] = 0;
 #endif
+	} else {
+	    debug("%s: found partition table\n", __func__);
 	}
 
 	return fat_set_blk_dev(dev_desc, &info);

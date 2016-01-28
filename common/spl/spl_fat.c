@@ -16,15 +16,19 @@
 #include <errno.h>
 #include <image.h>
 
-static int fat_registered;
+static int fat_registered = 0;
 
 #ifdef CONFIG_SPL_FAT_SUPPORT
 static int spl_register_fat_device(block_dev_desc_t *block_dev, int partition)
 {
 	int err = 0;
 
-	if (fat_registered)
+	debug("%s: block_dev = %p, partition = %d\n", __func__, block_dev, partition);
+	
+	if (fat_registered) {
+		printf("%s: fat device already registered, fat_registered=%d\n", __func__, fat_registered);
 		return err;
+	}
 
 	err = fat_register_device(block_dev, partition);
 	if (err) {
